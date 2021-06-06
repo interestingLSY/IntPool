@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"> </script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" />
+
+	<title> int 矿池 IntPool </title>
+
+<style>
+#coinSelector>.row{
+	font-size: 16px;
+	color: #233;
+}
+#coinSelector>a.row:hover{
+	background-color: #ddd;
+}
+</style>
+
+</head>
+
+<body style="background-color: #eee">
+	<div class="ui two column horizontally divided grid" style="margin-left: 0px; margin-right: 0px;">
+		<div class="three wide column">
+			<div class="ui two row vertically divided grid" style="margin: 0px;">
+				<div id="coinSelector" class="ui vertically divided center aligned grid" style="margin: 0">
+					<div class="row no	">
+						<h2> 币种选择 </h2>
+					</div>
+					<a href="/" class="row">
+						主页
+					</a>
+					<% for( var coin in coinsConfig ){ %>
+						<% var coinConfig = coinsConfig[coin]; %>
+						<a href="coin/<%=coinConfig.name%>" class="row">
+							<%=coinConfig.chineseName%> / <%=coinConfig.name%> / <%=coinConfig.symbol%>
+						</a>
+					<% } %>
+				</div>
+			</div>
+		</div>
+		<div class="thirteen wide column">

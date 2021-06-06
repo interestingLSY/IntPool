@@ -1,0 +1,73 @@
+<%- include('base_header.html'); -%>
+
+<style>
+</style>
+
+<div class="ui column" style="margin-top: 12px;">
+	<h4 class="ui block top attached header">
+		<!-- <i aria-hidden="true" class="handshake outline icon" ></i>  -->
+		来了？请坐
+	</h4>
+	<div class="ui bottom attached aligned segment">
+		<div class="ui text container">
+			<h2> 欢迎来到 int 矿池（IntPool）! 👋</h2>
+			<p> 这个矿池有个外号，叫做<b>高中生矿池</b> </p>
+			<p> 本矿池的初心即为帮助各位萌新，旨在让第一次挖矿的萌新们能够快速上手，有一个良好的挖矿体验。
+				本矿池的目标是提供从钱包到挖矿的一条龙服务，让您足不出户，安心挖矿。</p>
+			<p> 当然，本矿池也欢迎在挖矿圈混得风生水起的大佬们啦~ 本矿池会力所能及地提供各种数据统计服务。</p>
+			<p> 那我们话不多说，赶紧上手吧！如果你是一只萌新，请点击下面的你想挖的币种，开始我们的挖矿之旅。
+				如果您是大佬，您可以点击下面的“选择币种”按钮查看矿池参数，也直接使用页面上方菜单上的按钮们！</p>
+			<p> 祝您财源滚滚，挖矿顺利！</p>
+		</div>
+	</div>
+
+	<h4 class="ui block top attached header">
+		开始挖矿！
+	</h4>
+	<div class="ui bottom attached aligned segment">
+		<div class="ui text container">
+			<p> 请在右侧选择您想挖的币种 </p>
+			<div class="ui center row">
+			</div>
+		</div>
+	</div>
+
+	<h4 class="ui block top attached header">
+		投食
+	</h4>
+	<div class="ui bottom attached aligned segment">
+		<div class="ui text container">
+			<p> 矿池刚刚开业，希望诸位老爷的帮助~ </p>
+			<% for( var coin in coinsConfig ){ %>
+				<p>
+					<% var coinConfig = coinsConfig[coin]; %>
+					<%=coinConfig.chineseName%> / <%=coinConfig.name%>: <%=coinConfig.donationAddress%>
+				</p>
+			<% } %>
+		</div>
+	</div>
+
+	<h4 class="ui block top attached header">
+		什么？你有建议？有问题？有不满的地方？
+	</h4>
+	<div class="ui bottom attached aligned segment">
+		<div class="ui text container">
+			<p> 欢迎加入矿池交流群！ </p>
+			<p> 啊我好像还没建群，那就先用喜鹊币的交流群吧！有问题的话 @ 群主就好了~
+				群号是：953467739 </p>
+		</div>
+	</div>
+
+	<h4 class="ui block top attached header">
+		更新日志
+	</h4>
+	<div class="ui bottom attached aligned segment">
+		<div class="ui text container">
+			<ul>
+
+			</ul>
+		</div>
+	</div>
+</div>
+
+<%- include('base_footer.html'); -%>
