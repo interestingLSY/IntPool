@@ -1,7 +1,7 @@
 {
   "name": "intlsypool",
   "version": "1.0.0",
-  "description": "A open source mining pool",
+  "description": "An open source mining pool",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
