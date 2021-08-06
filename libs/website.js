@@ -66,13 +66,12 @@ module.exports = function(portalConfig,coinsConfig){
 					for( var index in result )
 						result[index] = JSON.parse(result[index]);
 					const nowTime = Date.now();
-					for( var index in result ){
-						// if( nowTime - result[index].time > 20*60*1000 ) continue;
-						for( var sId in result[index].clientInfo ){
-							var address = result[index].clientInfo[sId].address;
+					for( var record of result ){
+						for( var sId in record.clientInfo ){
+							var address = record.clientInfo[sId].address;
 							if(!addressToSId[address]) addressToSId[address] = new Set();
 							addressToSId[address].add(sId);
-							sIdToLabel[sId] = result[index].clientInfo[sId].label;
+							sIdToLabel[sId] = record.clientInfo[sId].label;
 						}
 					}
 					coinsStat[coin].history = result;
@@ -180,10 +179,10 @@ module.exports = function(portalConfig,coinsConfig){
 			else minerStat = minerStatCached[minerAddress] = await (async ()=>{
 				var historyHr = {};	// key: sId, value: Array
 				var historySumHr = [];
-				for( var index in coinStat.history ){
+				for( var record of coinStat.history ){
 					var sumHr = 0;
 					addressToSId[minerAddress].forEach((sId)=>{
-						var curHr = coinStat.history[index].clientInfo[sId] ? coinStat.history[index].clientInfo[sId].hr : 0;
+						var curHr = record.clientInfo[sId] ? record.clientInfo[sId].hr : 0;
 						if(!historyHr[sId]) historyHr[sId] = [];
 						historyHr[sId].push(curHr);
 						sumHr += curHr;

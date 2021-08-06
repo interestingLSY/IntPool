@@ -14,8 +14,7 @@ module.exports = function(portalConfig,coinConfig){
 		solvedBlocks = solvedBlocks.map((x)=>JSON.parse(x));
 		var currentBlockHeight = parseInt(await daemon.cmdSync('getblockcount',[]));
 		
-		for( let index in solvedBlocks ){
-			let nowBlock = solvedBlocks[index];
+		for( let nowblock of solvedBlocks ){
 			if( currentBlockHeight - nowBlock.height > coinConfig.blockConfirmation+2 ) break;
 			daemon.cmd('getblock',[nowBlock.blockHash],async function(err,result){
 				if( result.confirmations == -1 ){

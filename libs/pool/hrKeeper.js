@@ -38,7 +38,6 @@ module.exports = function(portalConfig,coinConfig){
 		if(hrQueue.isEmpty()) return 0;
 		var nowHr = stratumDiffSum * shareMultiplier / timeIntervalSum;
 		var finalHr = oldHr*portalConfig.pool.hrParamAlpha + nowHr*(1-portalConfig.pool.hrParamAlpha);
-		console.log(oldHr,nowHr,finalHr);
 		return finalHr;
 	}
 }
