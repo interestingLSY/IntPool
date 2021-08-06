@@ -2,6 +2,7 @@ var dateFormat = require('dateformat');
 var colors = require('colors');
 
 var valueOfLevel = {
+	'protocol': 0,
 	'debug': 1,
 	'info': 2,
 	'warning': 3,
@@ -11,6 +12,7 @@ var valueOfLevel = {
 
 var GetColorOfLevel = function( level , text ){
 	switch(level){
+		case 'protocol': return text.grey;
 		case 'debug': return text.grey;
 		case 'info': return text.green;
 		case 'warning': return text.yellow;
@@ -30,7 +32,7 @@ var logger = module.exports = function( portalConfig , moduleName , subModuleNam
 	this.log = function( level , ...text ){
 		if( !isLoggingEnabled || valueOfLevel[level] < logLevel ) return;
 
-		var finalText = dateFormat(new Date(),'yyyy-mm-dd HH:MM:ss');
+		var finalText = dateFormat(new Date(),'mm-dd HH:MM:ss');
 		finalText += ' [' + moduleName;
 		if(subModuleName) finalText += '.' + subModuleName;
 		finalText += ']\t';
@@ -51,9 +53,11 @@ var logger = module.exports = function( portalConfig , moduleName , subModuleNam
 		console.log(finalText);
 	}
 
+	this.protocol	= (...text) => this.log('protocol',...text);
 	this.debug		= (...text) => this.log('debug',...text);
 	this.info		= (...text) => this.log('info',...text);
 	this.warning	= (...text) => this.log('warning',...text);
 	this.error		= (...text) => this.log('error',...text);
 	this.critical	= (...text) => this.log('critical',...text);
+	this.assert		= (expression,text="") => { if(!expression) this.log('critical','Assertion Failed!',text); }
 }

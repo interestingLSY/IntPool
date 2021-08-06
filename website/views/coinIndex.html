@@ -1,6 +1,267 @@
-<%- include('base_header.html'); -%>
+<%- include('base_header.html',{title: coinConfig.chineseName + ' / ' + coinConfig.name}) -%>
 
 <style>
+hr{
+	margin-top: 20px;
+	border:none; border-top:2px dashed #000;
+}
+h3{
+	position: relative;
+	left: -20px;
+}
 </style>
 
+<script> $("#menu-<%=coinConfig.name%>").addClass("selected"); </script>
+<script>
+const CHART_COLORS = ['#4dc9f6','#f67019','#f53794','#537bc4','#acc236','#166a8f','#00a950','#58595b','#8549ba'];
+function GetChartColor(index){
+	return CHART_COLORS[index % CHART_COLORS.length];
+}
+var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.history[index].time).format('HH:mm')%>",<%}%>];
+
+</script>
+
+<div class="ui container" style="margin-top: 40px; width: 80%">
+	<h1 class="ui header"><%=coinConfig.chineseName%> / <%=coinConfig.name%> / <%=coinConfig.symbol%></h1>
+	
+	<h3> 我的矿工 </h3>
+	<p> <input placeholder="请在此输入您的钱包地址" id="minerAddressInput" type="text"></input> <button id="minerAddressSubmitBtn">提交并查询</button></p>
+	<script>
+		$("#minerAddressInput").val("<%=minerAddress%>");
+		$("#minerAddressSubmitBtn").click(function(){
+			$("#minerAddressSubmitBtn").text("正在提交...");
+			var inputedMinerAddress = $("#minerAddressInput").val();
+			if( inputedMinerAddress.indexOf('.') != -1 )
+				inputedMinerAddress = inputedMinerAddress.substr(0,inputedMinerAddress.indexOf('.'));
+			document.cookie="minerAddress="+inputedMinerAddress+"; expires=Thu, 18 Dec 2043 12:00:00 GMT";
+			location.reload();
+		});
+	</script>
+	<%if(!minerAddress){%>
+		<h4><b>您尚未设置钱包地址</b></h4>
+	<%}else if(minerStat.notFound){%>
+		<h4><b>您的矿机在过去 24 小时内没有任何提交</b></h4>
+		<p>
+			建议：<br />
+			<ul>
+				<li>如果您刚将矿机连接到矿池，请等待五分钟</li>
+				<li>检查您输入的钱包地址是否正确</li>
+				<li>检查您选择的货币种类是否正确</li>
+				<li>检查矿机是否掉线</li>
+			</ul>
+		</p>
+	<%}else{%>
+		<p> 当前钱包地址：<%=minerAddress%> </p>
+		<table class="ui celled collapsing table" style="font-size: 14px;">
+			<thead>
+				<tr>
+					<th> 未支付金额 </th>
+					<th> 已支付金额 </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td> <%= SatoshiToCoin(minerStat.accountInfo.unpaid,2) %> </td>
+					<td> <%= SatoshiToCoin(minerStat.accountInfo.paid,2) %> </td>
+				</tr>
+			</tbody>
+		</table>
+		<p> 为避免过多的手续费损失，矿池将在您的“未支付金额”达到 <%= coinConfig.payment.minimumPayment %> <%= coinConfig.symbol %> 时进行支付 </p>
+		
+		<canvas id="minerHistorySumHrCanvas" style="max-height: 300px;"> </canvas>
+		<canvas id="minerHistoryHrCanvas" style="max-height: 300px;"> </canvas>
+		<script>
+			var minerHistorySumHrChart = new Chart($("#minerHistorySumHrCanvas"),{
+				type: 'line',
+				options: {},
+				data: {
+					labels: chartX,
+					datasets: [{
+						label: '您所有的矿机的哈希率之和',
+						data: [<%for( var index in minerStat.historySumHr){%><%=minerStat.historySumHr[index]%>,<%}%>],
+						borderColor: "#39C5BB",
+						backgroundColor: "#39C5BB"
+					}]
+				}
+			})
+			var minerHistoryHrCanvas = new Chart($("#minerHistoryHrCanvas"),{
+				type: 'line',
+				options: {},
+				data: {
+					labels: chartX,
+					datasets: [
+						<% var counter = 0; %>
+						<% for( var sId in minerStat.historyHr ){ %>
+							{
+								label: '<%=sIdToLabel[sId]%>',
+								data: [<%for( var index in minerStat.historyHr[sId]){%><%=minerStat.historyHr[sId][index]%>,<%}%>],
+								borderColor: GetChartColor(<%=counter%>)+"99",
+								backgroundColor: GetChartColor(<%=counter%>)+"66"
+							},
+							<% counter += 1; %>
+						<% } %>
+					]
+				}
+			})
+		</script>
+	<%}%>
+	
+	<h3> 新手上路 & 疑难解答 </h3>
+	<a href="/coin/<%=coinConfig.name%>/help"> 点击这里查看教程 </a>
+	
+	<h3> 连接到矿池 </h3>
+	<table class="ui celled collapsing table" style="font-size: 14px;">
+		<thead>
+			<tr>
+				<th> 地址 </th>
+				<th> 难度 </th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for( var port in coinConfig.stratumServer.ports ){ %>
+				<% var portConfig = coinConfig.stratumServer.ports[port]; %>
+				<tr>
+					<td> stratum+tcp://<%=portalConfig.pool.poolUrl%>:<%=port%> </td>
+					<td>
+						<% if(portConfig.varDiff){ %>
+							<%=portConfig.varDiff.minDiff%> ~ <%=portConfig.varDiff.maxDiff%>，起始难度 <%=portConfig.diff%>
+						<% }else{ %>
+							<%=portConfig.diff%>
+						<% } %>
+					</td>
+				</tr>
+			<% } %>
+		</tbody>
+	</table>
+	
+	<h3> 矿池状态 </h3>
+	<p style="line-height: 1.5em">
+		当前矿池哈希率：<%=GetReadableHr(coinStat.latest.pool.hr)%> <br />
+		当前全网哈希率（估测）：<%=GetReadableHr(coinStat.latest.network.hr)%> <br />
+		矿池的钱包连接到的节点数：<%=coinStat.peerCount%> <br />
+		矿池钱包版本：<%=coinStat.version%> <br />
+		矿池当前块高：<%=coinStat.currentBlockHeight%> <br />
+		维护矿池不易！如果您想支持矿池，请向 <%=coinConfig.donationAddress%> 支付一些 <%=coinConfig.name%>，谢谢！ <br />
+		其他货币的捐赠地址见<a href="/">主页</a>
+	</p>
+	
+	<h3> 历史状态 </h3>
+	<canvas id="networkHistoryHrCanvas" style="max-height: 300px;"> </canvas>
+	<script>
+		var networkHistoryHrChart = new Chart($("#networkHistoryHrCanvas"),{
+			type: 'line',
+			options: {},
+			data: {
+				labels: chartX,
+				datasets: [{
+					label: '全网哈希速率',
+					data: [<%for( var index in coinStat.history){%><%=coinStat.history[index].network.hr%>,<%}%>],
+					borderColor: "#66ccffaa",
+					backgroundColor: "#66ccffaa"
+				},{
+					label: '矿池哈希速率',
+					data: [<%for( var index in coinStat.history){%><%=coinStat.history[index].pool.hr%>,<%}%>],
+					borderColor: "#ee0000aa",
+					backgroundColor: "#ee0000aa"
+				}]
+			}
+		})
+	</script>
+	
+	<% if( statForAdmin.isAdmin ){ %>
+	<h3> 欢迎管理员爸爸 </h3>
+	<p> 矿池账户：</p>
+	<table class="ui celled collapsing table" style="font-size: 14px;">
+		<thead>
+			<tr>
+				<% for( var address in statForAdmin.walletAccounts ){ %>
+					<th> <%= address %> </th>
+				<% } %>
+				<th><b> 总和 </b></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<% for( var address in statForAdmin.walletAccounts ){ %>
+					<td> <%= statForAdmin.walletAccounts[address].toFixed(2) %> </td>
+				<% } %>
+				<td><b> <%= statForAdmin.totalMoneyIHave.toFixed(2) %> </b></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<% } %>
+	
+	<h3> 矿池中的所有矿工 </h3>
+	<table class="ui collapsing table">
+		<thead>
+			<tr>
+				<th> 地址  </th>
+				<th> 哈希率 </th>
+				<th> 矿机数 </th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for( var index in onlineMinersSorted ){ %>
+				<tr>
+					<td><%= GetVagueAddress(onlineMinersSorted[index].address,statForAdmin.isAdmin) %></td>
+					<td><%= GetReadableHr(onlineMinersSorted[index].hr) %></td>
+					<td><%= onlineMinersSorted[index].workerCount %></td>
+				</tr>
+			<% } %>
+		</tbody>
+	</table>
+		
+	<h3> 矿池找到的块（爆块）记录</h3>
+	<% if( !coinStat.solvedBlocks || coinStat.solvedBlocks.length == 0 ){ %>
+		<p> 矿池尚未找到任何块 </p>
+	<% }else{ %>
+		<p style="font-size: 16px"> 累计找到了 <%=coinStat.solvedBlockCount%> 个块</p>
+		<p> 下面只显示最近找到的 25 个块 </p>
+		<table class="ui very basic table">
+			<tbody>
+				<% for( var index in coinStat.solvedBlocks ){ %>
+					<tr>
+						<td style="font-size: 26px;"> #<%= coinStat.solvedBlocks[index].height %> </td>
+						<td>
+							<% var confirmedCount = coinStat.currentBlockHeight-coinStat.solvedBlocks[index].height %>
+							<% if( coinStat.solvedBlocks[index].isOrphanedBlock ){ %>
+								<span style="font-size: 14px;"> <i class="male icon"></i> 孤块 </span>
+							<% }else if( confirmedCount <= coinConfig.blockConfirmation ){ %>
+								<span style="font-size: 20px;"> <%= confirmedCount %> </span>
+								<span style="font-size: 10px;">/ <%= coinConfig.blockConfirmation %> </span>
+							<% }else{ %>
+								<span style="font-size: 12px;"> <i class="check icon"></i> 已成熟 </span>
+							<% } %>
+						</td>
+						<td>
+							<span style="font-size: 14px"> 发现于 <%= Moment(coinStat.solvedBlocks[index].time).format('MM-DD HH:mm:ss') %> </span> <br />
+							<span style="font-size: 12px"> 被 <%= GetVagueAddress(coinStat.solvedBlocks[index].finder,statForAdmin.isAdmin) %> 找到 </span>
+						</td>
+						<td>
+							<% if( coinStat.solvedBlocks[index].finder == minerAddress ){ %>
+								<span style="font-size: 14px; color: #66ccff"> 您的矿机发现了这个块！牛逼！ </span> <br />
+								<span style="font-size: 9px; color: #888"> 作为块的发现者，您会被<b>额外</b>给予该块总收益的 1% 作为奖励 </span>
+							<% } %>
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	<% } %>
+	
+	<h3> 支付记录 </h3>
+	<p style="font-size: 16px;"> 总支付额：<%= SatoshiToCoin(coinStat.paymentStatistics.totalAmount,2) %> <%=coinConfig.symbol%> </p>
+	<p> 下面只显示最近的 20 条支付记录 </p>
+	<table class="ui very basic table">
+		<tbody>
+			<% for( var index in coinStat.paymentHistory ){ %>
+				<tr>
+					<td> <%= Moment(coinStat.paymentHistory[index].time).format('MM-DD HH:mm:ss') %> </td>
+					<td> <%= SatoshiToCoin(coinStat.paymentHistory[index].amount,3) %> <%= coinConfig.symbol %></td>
+				</tr>
+			<% } %>
+		</tbody>
+	</table>
+</div>
 <%- include('base_footer.html'); -%>

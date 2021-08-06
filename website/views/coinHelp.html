@@ -1,0 +1,92 @@
+<%- include('base_header.html',{title: coinConfig.chineseName + ' / ' + coinConfig.name + ' 帮助'}) -%>
+
+<style>
+h3{
+	position: relative;
+	left: -20px;
+}
+</style>
+
+<script> $("#menu-<%=coinConfig.name%>").addClass('selected') </script>
+
+<div class="ui container" style="margin-top: 40px; width: 80%">
+	<h1 class="ui header"><%=coinConfig.chineseName%> / <%=coinConfig.name%> / <%=coinConfig.symbol%> 挖矿教程</h1>
+	
+	<h3> 我需要做什么？ </h3>
+	<p> 总的来说，您需要进行以下几个步骤 <br /></p>
+	<div class="ui steps">
+		<div class="step">
+			<i class="credit card icon"></i>
+			<div class="content">
+				<div class="title"> 下载钱包 </div>
+				<div class="description"> 一点就行 </div>
+			</div>
+		</div>
+		<div class="step">
+			<i class="dollar icon"></i>
+			<div class="content">
+				<div class="title"> 注册钱包 </div>
+				<div class="description"> 非常简单！ </div>
+			</div>
+		</div>
+		<div class="step">
+			<i class="download icon"></i>
+			<div class="content">
+				<div class="title"> 下载挖矿软件 </div>
+				<div class="description"> 下载难道不简单？ </div>
+			</div>
+		</div>
+		<div class="step">
+			<i class="wrench icon"></i>
+			<div class="content">
+				<div class="title"> 配置挖矿软件 </div>
+				<div class="description"> 手把手教！ </div>
+			</div>
+		</div>
+		<div class="step">
+			<i class="play icon"></i>
+			<div class="content">
+				<div class="title"> 运行挖矿软件 </div>
+				<div class="description"> 说白了就是双击 </div>
+			</div>
+		</div>
+	</div>
+	
+	<h3> 前言：遇到问题了怎么办 </h3>
+	<p>
+		大部分人遇到问题之后的第一反应都是：“哎呀，怎么回事？赶紧找个人问问。” <br />
+		但是，在矿工的世界中，大家通常不会这么做。在我们的世界里，您应该首先尝试自行解决问题，实在解决不了的话再求助他人。 <br />
+		这是为什么呢？原因是这样的：如果大家看了您提出的问题，觉得“如果你自己能好好看看说明，问题就不会出现”，那么您大概率得不到他人的帮助，心情也自然地不爽 <br />
+		所以，当您遇到问题时，请首先参考下面的做法：<br />
+		1. 认真阅读步骤，确保没有漏步 <br />
+		2. 确保您的操作无误。新手们常犯的错误包括但不限于：复制时少复制一个字符、不小心删掉了字符 <br />
+		3. 尝试重新下载 / 重新安装 / 重启 <br />
+		4. 使用<b>高质量的搜索引擎</b>搜索您的问题 <br />
+		注：<b>高质量的搜索引擎</b>包括 谷歌、<a href="https://cn.bing.com">必应搜索（国内可用）</a>，不包括 <b>百度</b>、搜狗、神马、360 等 <br />
+		如果问题还是没有解决，您可以加入 鸟池官方 qq 群（群号：）或者 鸟池官方微信群（请先加站长微信，微信号 intlsy）来寻求帮助。记得在提问时附上截屏等 <br >
+		如果您认为矿池存在问题，请联系 鸟池站长 intlsy（qq 号：2659723130，微信号：intlsy）<br />
+	</p>
+	
+	<h3> 下载钱包 </h3>
+	<p>
+		请点击 <a href=<%=coinConfig.help.walletDownloadAddress%>>这里</a> 来下载钱包 <br />
+		<% if(coinConfig.help.walletDownloadAltAddress){ %> 或者从 <a href=<%=coinConfig.help.walletDownloadAltAddress%>>这里</a> 下载 <br /><%}%>
+		下载完成之后解压缩即可 <br />
+		恭喜你完成了第一步~
+	</p>
+	
+	<h3> 注册钱包 </h3>
+	<p>
+		在解压之后的文件中找到那个以 qt 结尾的应用程序（exe 文件），双击它。 <br />
+		点击左上角 文件 -> 收款地址（接收地址），此时应该弹出来一个框。 <br />
+		点击“新建”，输入标签（输什么都行，比如“我的钱包”），地址不用输入。<br />
+		点击“确定”，右键地址，选择“复制”。这个地址就是您的钱包地址，待会儿需要用。<br />
+		先别着急关钱包！钱包需要进行同步。您可以先将钱包最小化，然后进行其他操作。 <br />
+		钱包同步的时间会比较长，可能需要几个小时甚至一天，请耐心等待，不要关电脑。
+	</p>
+	
+	<h3> 下载挖矿软件 </h3>
+	
+	<h3> 配置挖矿软件 </h3>
+	<h3> 运行挖矿软件 </h3>
+</div>

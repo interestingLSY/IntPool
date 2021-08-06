@@ -1,42 +1,70 @@
 <!DOCTYPE HTML>
-
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"> </script>
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"> </script>
+<link rel="stylesheet" type="text/css" href="/static/Semantic-UI/semantic.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/components/icon.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.0/dist/chart.min.js"></script>
 
-	<title> int 矿池 IntPool </title>
+<title> <%= title ? title+' - ' : ''%>鸟池 </title>
 
+<script>
+var GetReadableHr = function(hr){
+	const suffixes = ['H/s','KH/s','MH/s','GH/s','TH/s','PH/s'];
+	var suffixIndex = 0
+	while( hr > 1000 && suffixIndex+1 < suffixes.length ){
+		hr /= 1000;
+		suffixIndex += 1;
+	}
+	return hr.toFixed(1) + ' ' + suffixes[suffixIndex];
+}
+</script>
 <style>
+#coinSelector{
+	padding-left: 0;
+	padding-right: 0;
+}
 #coinSelector>.row{
 	font-size: 16px;
-	color: #233;
+	color: #fff;
 }
 #coinSelector>a.row:hover{
-	background-color: #ddd;
+	background-color: #444;
+}
+#coinSelector>a.row.selected{
+	background-color: #666;
+}
+p{
+	line-height: 1.6em;
+}
+#coinSelectorWrapper{
+	padding-left: 0;
+	padding-right: 0;
+	background-color: #111;
+	color: #fff;
 }
 </style>
 
 </head>
 
-<body style="background-color: #eee">
-	<div class="ui two column horizontally divided grid" style="margin-left: 0px; margin-right: 0px;">
-		<div class="three wide column">
-			<div class="ui two row vertically divided grid" style="margin: 0px;">
-				<div id="coinSelector" class="ui vertically divided center aligned grid" style="margin: 0">
-					<div class="row no	">
+<body style="background-color: #fcfcfc">
+	<div class="ui two column horizontally divided grid" style="margin-left: 0px; margin-right: 0px">
+		<div id="coinSelectorWrapper" class="three wide column">
+			<div class="ui two row vertically divided grid" style="margin: 0px">
+				<div id="coinSelector" class="ui vertically divided center aligned grid" style="margin: 0; width: 100%">
+					<div class="row" style="background-color: #111; border-bottom: 1px dashed #999; margin-bottom: 8px;">
 						<h2> 币种选择 </h2>
 					</div>
-					<a href="/" class="row">
+					<a href="/" class="row" id="menu-home">
 						主页
 					</a>
 					<% for( var coin in coinsConfig ){ %>
 						<% var coinConfig = coinsConfig[coin]; %>
-						<a href="coin/<%=coinConfig.name%>" class="row">
+						<a href="/coin/<%=coinConfig.name%>" class="row" id="menu-<%=coinConfig.name%>">
 							<%=coinConfig.chineseName%> / <%=coinConfig.name%> / <%=coinConfig.symbol%>
 						</a>
 					<% } %>

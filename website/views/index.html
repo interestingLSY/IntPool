@@ -1,7 +1,9 @@
-<%- include('base_header.html'); -%>
+<%- include('base_header.html',{title:'主页'}); -%>
 
 <style>
 </style>
+
+<script> $("#menu-home").addClass("selected"); </script>
 
 <div class="ui column" style="margin-top: 12px;">
 	<h4 class="ui block top attached header">
@@ -10,13 +12,13 @@
 	</h4>
 	<div class="ui bottom attached aligned segment">
 		<div class="ui text container">
-			<h2> 欢迎来到 int 矿池（IntPool）! 👋</h2>
-			<p> 这个矿池有个外号，叫做<b>高中生矿池</b> </p>
+			<h2> 欢迎来到鸟池! 👋</h2>
+			<p> 这个矿池有个外号，叫做<b>高中生矿池</b>。这大概是因为站长在开始开发矿池的时候还是个高中生。</p>
 			<p> 本矿池的初心即为帮助各位萌新，旨在让第一次挖矿的萌新们能够快速上手，有一个良好的挖矿体验。
 				本矿池的目标是提供从钱包到挖矿的一条龙服务，让您足不出户，安心挖矿。</p>
 			<p> 当然，本矿池也欢迎在挖矿圈混得风生水起的大佬们啦~ 本矿池会力所能及地提供各种数据统计服务。</p>
-			<p> 那我们话不多说，赶紧上手吧！如果你是一只萌新，请点击下面的你想挖的币种，开始我们的挖矿之旅。
-				如果您是大佬，您可以点击下面的“选择币种”按钮查看矿池参数，也直接使用页面上方菜单上的按钮们！</p>
+			<p> 那我们话不多说，赶紧上手吧！如果你是一只萌新，请在左侧选择你想挖的币种，然后查看新手教程，开始我们的挖矿之旅。
+				如果您是大佬，请在左侧选择你想挖的币种，查看挖矿地址等。</p>
 			<p> 祝您财源滚滚，挖矿顺利！</p>
 		</div>
 	</div>
@@ -26,9 +28,7 @@
 	</h4>
 	<div class="ui bottom attached aligned segment">
 		<div class="ui text container">
-			<p> 请在右侧选择您想挖的币种 </p>
-			<div class="ui center row">
-			</div>
+			<p> 请在左侧选择您想挖的币种 </p>
 		</div>
 	</div>
 
@@ -48,7 +48,7 @@
 	</div>
 
 	<h4 class="ui block top attached header">
-		什么？你有建议？有问题？有不满的地方？
+		有建议？有问题？有不满的地方？
 	</h4>
 	<div class="ui bottom attached aligned segment">
 		<div class="ui text container">

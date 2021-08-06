@@ -1,8 +1,10 @@
 var redis = require('redis')
-var Logger = require('./../logger.js')
+var util = require('util')
 
-module.exports = function(portalConfig,coinConfig){
-	var logger = new Logger(portalConfig,coinConfig.name);
+var Logger = require('./logger.js')
+
+module.exports = function(portalConfig,moduleName){
+	var logger = new Logger(portalConfig,moduleName);
 
 	var redisClient = redis.createClient( portalConfig.redis.port , portalConfig.redis.host );
 	redisClient.on('error',function(err){
@@ -16,10 +18,13 @@ module.exports = function(portalConfig,coinConfig){
 			if(err) logger.critical('redis 的密码似乎不正确...');
 		});
 
-	this.cmd = function(command,args,callback){
-		return redisClient[command](args,function(err,res){
-			if(callback)
-				callback(err,res);
+	var cmd = function(command,args,callback){
+		redisClient[command](args,function(err,res){
+			if(err) logger.error('Redis error',err);
+			if(callback) callback(err,res);
 		});
 	}
+
+	this.cmd = cmd;
+	this.cmdSync = util.promisify(cmd);
 }
