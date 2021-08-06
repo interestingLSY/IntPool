@@ -180,7 +180,7 @@ module.exports = function(portalConfig,coinsConfig){
 					redis.cmdSync('HGET',[tablePrefix+'accountInfo',minerAddress])
 				]).then(function(result){
 					((res)=>{
-						accountInfo = JSON.parse(res);
+						accountInfo = JSON.parse(res) || { 'unpaid': 0, 'paid': 0 };
 					})(result[0]);
 				});
 				return {
