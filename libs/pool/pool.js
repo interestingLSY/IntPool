@@ -75,7 +75,7 @@ module.exports = function(portalConfig,coinConfig){
 			// hashrate calculating
 			if( clientInfo[sId].lastSubmit != -1 ){
 				hrKeepers[sId].AddNewShare(Date.now(),clientInfo[sId].lastSubmit,shareData.difficulty);
-				clientInfo[sId].hr = hrKeepers[sId].GetHr();
+				clientInfo[sId].hr = hrKeepers[sId].GetHr(clientInfo[sId].hr);
 			}
 			clientInfo[sId].lastSubmit = Date.now();
 			
@@ -118,7 +118,6 @@ module.exports = function(portalConfig,coinConfig){
 	var GetCurrentStat = async function(){
 		var poolHrSum = 0;
 		for( var sId in clientInfo ){
-			clientInfo[sId].hr = hrKeepers[sId].GetHr();
 			poolHrSum += clientInfo[sId].hr;
 		}
 		var networkHr = 0;

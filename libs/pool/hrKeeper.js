@@ -33,13 +33,12 @@ module.exports = function(portalConfig,coinConfig){
 		stratumDiffSum += stratumDiff;
 	}
 	
-	this.GetHr = function(){
+	this.GetHr = function(oldHr){
 		this.CleanOutdatedShare();
 		if(hrQueue.isEmpty()) return 0;
-		var GetAddjustment = function(){
-			if( hrQueue.size() > 10 ) return 1.0;
-			else return hrQueue.size() * 0.1;
-		}
-		return stratumDiffSum * shareMultiplier / timeIntervalSum * GetAddjustment();
+		var nowHr = stratumDiffSum * shareMultiplier / timeIntervalSum;
+		var finalHr = oldHr*portalConfig.pool.hrParamAlpha + nowHr*(1-portalConfig.pool.hrParamAlpha);
+		console.log(oldHr,nowHr,finalHr);
+		return finalHr;
 	}
 }
