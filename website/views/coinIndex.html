@@ -71,7 +71,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		<%
 			var sIds = [];
 			for( var sId in coinStat.latest.clientInfo )
-				if( coinStat.latest.clientInfo.address == minerAddress )
+				if( coinStat.latest.clientInfo[sId].address == minerAddress )
 					sIds.push(sId);
 		%>
 		<% if(!sIds.length){ %>
