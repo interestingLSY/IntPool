@@ -14,6 +14,7 @@ module.exports = function(portalConfig,coinConfig){
 	var pplnt = new Pplnt(portalConfig,coinConfig);
 	var paymentProcessor = new PaymentProcessor(portalConfig,coinConfig);
 	var orphanedBlockFilter = new OrphanedBlockFilter(portalConfig,coinConfig);
+	const tablePrefix = 'intpool:' + coinConfig.symbol + ':';
 
 	/*
 	key: subscriptionId
@@ -101,7 +102,7 @@ module.exports = function(portalConfig,coinConfig){
 		});
 
 		// 将这个块的信息丢到 redis 里面
-		redis.cmd('LPUSH',['intpool:'+coinConfig.symbol+':solvedBlocks',JSON.stringify(solvedBlockInfo)])
+		redis.cmd('LPUSH',[tablePrefix+'solvedBlocks',JSON.stringify(solvedBlockInfo)])
 
 		// 计算本轮中所有 client 的收益，并将这个收益划分到其对应的 address 上
 		var clientRewards = pplnt.GetRewards(shareData.blockReward);
@@ -114,8 +115,7 @@ module.exports = function(portalConfig,coinConfig){
 	}
 	pool.start();
 	
-	
-	var RecordStat = async function(){
+	var GetCurrentStat = async function(){
 		var poolHrSum = 0;
 		for( var sId in clientInfo ){
 			clientInfo[sId].hr = hrKeepers[sId].GetHr();
@@ -137,31 +137,41 @@ module.exports = function(portalConfig,coinConfig){
 				"hr": poolHrSum
 			}
 		}
-		redis.cmd('LPUSH',['intpool:'+coinConfig.symbol+':history',JSON.stringify(curStat)])
+		return curStat;
+	}
+	var SaveLatestStat = async function(){
+		var curStat = await GetCurrentStat();
+		redis.cmd('SET',[tablePrefix+'latestStat',JSON.stringify(curStat)]);
+	}
+	var RecordHistoryStat = async function(){
+		var curStat = await GetCurrentStat();
+		redis.cmd('LPUSH',[tablePrefix+'history',JSON.stringify(curStat)])
 	}
 	var RemoveOutdatedStat = async function(){
 		while(true){
-			var lastRecord = JSON.parse(await redis.cmdSync('LINDEX',['intpool:'+coinConfig.symbol+':history',-1]));
+			var lastRecord = JSON.parse(await redis.cmdSync('LINDEX',[tablePrefix+'history',-1]));
 			if( lastRecord && (Date.now()-lastRecord.time) > portalConfig.pool.historyWindow*1000 ){
-				redis.cmd('RPOP',['intpool:'+coinConfig.symbol+':history']);
+				redis.cmd('RPOP',[tablePrefix+'history']);
 			}else{
 				break;
 			}
 		}
 	}
-	RemoveOutdatedStat();
 	
 	
 	pool.on('started', async function(){
-		setInterval(function(){
-			RecordStat();
+		RemoveOutdatedStat();
+		setInterval(()=>{
 			RemoveOutdatedStat();
+			RecordHistoryStat();
 		},portalConfig.pool.historySaveInterval*1000);
-		setInterval(function(){
+		setInterval(()=>{
+			SaveLatestStat();
+		},portalConfig.pool.latestStatSaveInterval*1000);
+		setInterval(()=>{
 			orphanedBlockFilter.FiltrateOrphanedBlock();
 			paymentProcessor.ProcessPayment();
 		},coinConfig.payment.paymentInterval*1000);
-		paymentProcessor.ProcessPayment();
 		
 		logger.info(coinConfig.name,'的矿池创建完毕');
 	});

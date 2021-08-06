@@ -68,7 +68,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		</table>
 		<p> 为避免过多的手续费损失，矿池将在您的“未支付金额”达到 <%= coinConfig.payment.minimumPayment %> <%= coinConfig.symbol %> 时进行支付 </p>
 		
-		<canvas id="minerHistorySumHrCanvas" style="max-height: 300px;"> </canvas>
+		<canvas id="minerHistorySumHrCanvas" style="max-height: 230px;"> </canvas>
 		<canvas id="minerHistoryHrCanvas" style="max-height: 300px;"> </canvas>
 		<script>
 			var minerHistorySumHrChart = new Chart($("#minerHistorySumHrCanvas"),{

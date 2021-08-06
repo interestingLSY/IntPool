@@ -55,40 +55,53 @@ module.exports = function(portalConfig,coinsConfig){
 		for( let coin in coinsConfig ){
 			let tablePrefix = 'intpool:'+coinsConfig[coin].symbol+':';
 			coinsStat[coin] = {};
-			redis.cmd('LRANGE',[tablePrefix+'history',0,-1],function(err,result){
-				result.reverse();
-				for( var index in result )
-					result[index] = JSON.parse(result[index]);
-				const nowTime = Date.now();
-				for( var index in result ){
-					// if( nowTime - result[index].time > 20*60*1000 ) continue;
-					for( var sId in result[index].clientInfo ){
-						var address = result[index].clientInfo[sId].address;
-						if(!addressToSId[address]) addressToSId[address] = new Set();
-						addressToSId[address].add(sId);
-						sIdToLabel[sId] = result[index].clientInfo[sId].label;
+			
+			Promise.all([
+				redis.cmdSync('LRANGE',[tablePrefix+'history',0,-1]),
+				redis.cmdSync('GET',[tablePrefix+'latestStat'])
+			]).then(function(result){
+				((result)=>{
+					result.reverse();
+					for( var index in result )
+						result[index] = JSON.parse(result[index]);
+					const nowTime = Date.now();
+					for( var index in result ){
+						// if( nowTime - result[index].time > 20*60*1000 ) continue;
+						for( var sId in result[index].clientInfo ){
+							var address = result[index].clientInfo[sId].address;
+							if(!addressToSId[address]) addressToSId[address] = new Set();
+							addressToSId[address].add(sId);
+							sIdToLabel[sId] = result[index].clientInfo[sId].label;
+						}
 					}
-				}
-				coinsStat[coin].history = result;
-				coinsStat[coin].latest = result && result.length >= 1 ? result[result.length-1] : null;
-				coinsStat[coin].onlineMiners = {};
-				coinsStat[coin].onlineMinersSorted = [];
-				for( var sId in coinsStat[coin].latest.clientInfo ){
-					var clientInfo = coinsStat[coin].latest.clientInfo[sId];
-					var address = clientInfo.address;
-					if(!coinsStat[coin].onlineMiners[address])
-						coinsStat[coin].onlineMiners[address] = { hr: 0, workerCount: 0 };
-					coinsStat[coin].onlineMiners[address].hr += clientInfo.hr;
-					coinsStat[coin].onlineMiners[address].workerCount += 1;
-				}
-				for( var address in coinsStat[coin].onlineMiners )
-					coinsStat[coin].onlineMinersSorted.push({
-						address: address,
-						hr: coinsStat[coin].onlineMiners[address].hr,
-						workerCount: coinsStat[coin].onlineMiners[address].workerCount
-					})
-				coinsStat[coin].onlineMinersSorted.sort( (a,b)=>b.hr-a.hr );
+					coinsStat[coin].history = result;
+				})(result[0]);
+				
+				((latestStat)=>{
+					latestStat = JSON.parse(latestStat);
+					coinsStat[coin].latest = latestStat;
+					coinsStat[coin].history.push(latestStat);
+					
+					coinsStat[coin].onlineMiners = {};
+					coinsStat[coin].onlineMinersSorted = [];
+					for( var sId in latestStat.clientInfo ){
+						var clientInfo = latestStat.clientInfo[sId];
+						var address = clientInfo.address;
+						if(!coinsStat[coin].onlineMiners[address])
+							coinsStat[coin].onlineMiners[address] = { hr: 0, workerCount: 0 };
+						coinsStat[coin].onlineMiners[address].hr += clientInfo.hr;
+						coinsStat[coin].onlineMiners[address].workerCount += 1;
+					}
+					for( var address in coinsStat[coin].onlineMiners )
+						coinsStat[coin].onlineMinersSorted.push({
+							address: address,
+							hr: coinsStat[coin].onlineMiners[address].hr,
+							workerCount: coinsStat[coin].onlineMiners[address].workerCount
+						})
+					coinsStat[coin].onlineMinersSorted.sort( (a,b)=>b.hr-a.hr );
+				})(result[1]);
 			});
+			
 			daemons[coin].cmd('getpeerinfo',[],function(err,result){
 				coinsStat[coin].peerCount = result.length;
 			});
@@ -98,6 +111,7 @@ module.exports = function(portalConfig,coinsConfig){
 			daemons[coin].cmd('getblockcount',[],function(err,result){
 				coinsStat[coin].currentBlockHeight = parseInt(result);
 			});
+			
 			redis.cmd('LRANGE',[tablePrefix+'solvedBlocks',0,24],function(err,result){
 				coinsStat[coin].solvedBlocks = result.map((x)=>JSON.parse(x));
 				for( let index in coinsStat[coin].solvedBlocks ){
