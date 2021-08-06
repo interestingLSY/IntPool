@@ -60,8 +60,9 @@ module.exports = function(portalConfig,coinsConfig){
 				redis.cmdSync('LRANGE',[tablePrefix+'history',0,-1]),
 				redis.cmdSync('GET',[tablePrefix+'latestStat'])
 			]).then(function(result){
-				((result)=>{
+				((result,latestStat)=>{
 					result.reverse();
+					result.push(latestStat);
 					for( var index in result )
 						result[index] = JSON.parse(result[index]);
 					const nowTime = Date.now();
@@ -75,7 +76,7 @@ module.exports = function(portalConfig,coinsConfig){
 						}
 					}
 					coinsStat[coin].history = result;
-				})(result[0]);
+				})(result[0],result[1]);
 				
 				((latestStat)=>{
 					latestStat = JSON.parse(latestStat);
@@ -230,6 +231,7 @@ module.exports = function(portalConfig,coinsConfig){
 			coinStat: coinStat,
 			minerAddress: minerAddress,
 			minerStat: minerStat,
+			addressToSId: addressToSId,
 			sIdToLabel: sIdToLabel,
 			onlineMiners: onlineMiners,
 			onlineMinersSorted: coinsStat[coin].onlineMinersSorted,

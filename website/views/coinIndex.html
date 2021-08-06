@@ -68,6 +68,36 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		</table>
 		<p> 为避免过多的手续费损失，矿池将在您的“未支付金额”达到 <%= coinConfig.payment.minimumPayment %> <%= coinConfig.symbol %> 时进行支付 </p>
 		
+		<%
+			var sIds = [];
+			for( var sId in coinStat.latest.clientInfo )
+				if( coinStat.latest.clientInfo.address == minerAddress )
+					sIds.push(sId);
+		%>
+		<% if(!sIds.length){ %>
+			当前没有活跃的矿工
+		<% }else{ %>
+			<table class="ui celled collapsing table">
+				<thead>
+					<tr>
+						<th> 矿机名 </th>
+						<% for( var sId in sIds ){ %><th><%= coinStat.latest.clientInfo[sId].label %></th><% } %>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td> 当前算力 </td>
+						<% for( var sId in sIds ){ %><td><%= GetReadableHr(coinStat.latest.clientInfo[sId].hr) %></td><% } %>
+					</tr>
+					<tr>
+						<td> 最近一次提交于 </td>
+						<% var nowTime = Date.now() %>
+						<% for( var sId in sIds ){ %><td><%= coinStat.latest.clientInfo[sId].lastSubmit == -1 ? '刚刚' : Moment.duration(nowTime-coinStat.latest.clientInfo[sId].lastSubmit).asSeconds()+' 秒前' %></td><% } %>
+					</tr>
+				</tbody>
+			</table>
+		<% } %>
+		
 		<canvas id="minerHistorySumHrCanvas" style="max-height: 230px;"> </canvas>
 		<canvas id="minerHistoryHrCanvas" style="max-height: 300px;"> </canvas>
 		<script>
@@ -189,7 +219,6 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			</tr>
 		</tbody>
 	</table>
-	
 	<% } %>
 	
 	<h3> 矿池中的所有矿工 </h3>
