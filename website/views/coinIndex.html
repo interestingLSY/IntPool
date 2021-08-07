@@ -219,6 +219,21 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			</tr>
 		</tbody>
 	</table>
+	
+	<h3> 支付记录 </h3>
+	<p style="font-size: 16px;"> 总支付额：<%= SatoshiToCoin(coinStat.paymentStatistics.totalAmount,2) %> <%=coinConfig.symbol%> </p>
+	<p> 下面只显示最近的 20 条支付记录 </p>
+	<table class="ui very basic table">
+		<tbody>
+			<% for( var record of coinStat.paymentHistory ){ %>
+				<tr>
+					<td> <%= Moment(record.time).format('MM-DD HH:mm:ss') %> </td>
+					<td> <%= SatoshiToCoin(record.amount,3) %> <%= coinConfig.symbol %></td>
+					<td style="font-size: 10px"> <%= record.txId %> </td>
+				</tr>
+			<% } %>
+		</tbody>
+	</table>
 	<% } %>
 	
 	<h3> 矿池中的所有矿工 </h3>
@@ -278,20 +293,5 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			</tbody>
 		</table>
 	<% } %>
-	
-	<h3> 支付记录 </h3>
-	<p style="font-size: 16px;"> 总支付额：<%= SatoshiToCoin(coinStat.paymentStatistics.totalAmount,2) %> <%=coinConfig.symbol%> </p>
-	<p> 下面只显示最近的 20 条支付记录 </p>
-	<table class="ui very basic table">
-		<tbody>
-			<% for( var record of coinStat.paymentHistory ){ %>
-				<tr>
-					<td> <%= Moment(record.time).format('MM-DD HH:mm:ss') %> </td>
-					<td> <%= SatoshiToCoin(record.amount,3) %> <%= coinConfig.symbol %></td>
-					<td style="font-size: 10px"> <%= record.txId %> </td>
-				</tr>
-			<% } %>
-		</tbody>
-	</table>
 </div>
 <%- include('base_footer.html'); -%>
