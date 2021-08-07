@@ -200,7 +200,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 	
 	<% if( statForAdmin.isAdmin ){ %>
 	<h3> 欢迎管理员爸爸 </h3>
-	<p> 矿池账户：</p>
+	<h4> 矿池账户：</h4>
 	<table class="ui celled collapsing table" style="font-size: 14px;">
 		<thead>
 			<tr>
@@ -220,8 +220,8 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		</tbody>
 	</table>
 	
-	<h3> 支付记录 </h3>
-	<p style="font-size: 16px;"> 总支付额：<%= SatoshiToCoin(coinStat.paymentStatistics.totalAmount,2) %> <%=coinConfig.symbol%> </p>
+	<h4> 支付记录 </h4>
+	<p> 总支付额：<%= SatoshiToCoin(coinStat.paymentStatistics.totalAmount,2) %> <%=coinConfig.symbol%> </p>
 	<p> 下面只显示最近的 20 条支付记录 </p>
 	<table class="ui very basic table">
 		<tbody>
