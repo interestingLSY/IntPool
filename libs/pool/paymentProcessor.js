@@ -85,7 +85,7 @@ module.exports = function(portalConfig,coinConfig){
 				logger.error('支付出错，停止本轮支付');
 				return;
 			}
-			logger.info('支付成功！总支付额：',SatoshiToCoin(sumOfNeedToPay));
+			logger.info('支付成功！总支付额：',SatoshiToCoin(sumOfNeedToPay),'daemon 返回的 result: ',result);
 			
 			// 5. 将支付记录放进 redis 里
 			var paymentInfo = {
