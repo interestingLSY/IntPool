@@ -284,10 +284,11 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 	<p> 下面只显示最近的 20 条支付记录 </p>
 	<table class="ui very basic table">
 		<tbody>
-			<% for( var index in coinStat.paymentHistory ){ %>
+			<% for( var record of coinStat.paymentHistory ){ %>
 				<tr>
-					<td> <%= Moment(coinStat.paymentHistory[index].time).format('MM-DD HH:mm:ss') %> </td>
-					<td> <%= SatoshiToCoin(coinStat.paymentHistory[index].amount,3) %> <%= coinConfig.symbol %></td>
+					<td> <%= Moment(record.time).format('MM-DD HH:mm:ss') %> </td>
+					<td> <%= SatoshiToCoin(record.amount,3) %> <%= coinConfig.symbol %></td>
+					<td style="font-size: 10px"> <%= record.txId %> </td>
 				</tr>
 			<% } %>
 		</tbody>

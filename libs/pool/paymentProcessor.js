@@ -91,7 +91,8 @@ module.exports = function(portalConfig,coinConfig){
 			var paymentInfo = {
 				time: Date.now(),
 				amount: sumOfNeedToPay,
-				recipients: needToPay
+				recipients: needToPay,
+				txId: result
 			};
 			redis.cmd('LPUSH',[tablePrefix+'paymentHistory',JSON.stringify(paymentInfo)]);
 			
