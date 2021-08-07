@@ -75,24 +75,24 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 					sIds.push(sId);
 		%>
 		<% if(!sIds.length){ %>
-			当前没有活跃的矿工
+			<p> 当前没有活跃的矿工 </p>
 		<% }else{ %>
 			<table class="ui celled collapsing table">
 				<thead>
 					<tr>
 						<th> 矿机名 </th>
-						<% for( var sId in sIds ){ %><th><%= coinStat.latest.clientInfo[sId].label %></th><% } %>
+						<% for( var sId of sIds ){ %><th><%= coinStat.latest.clientInfo[sId].label %></th><% } %>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td> 当前算力 </td>
-						<% for( var sId in sIds ){ %><td><%= GetReadableHr(coinStat.latest.clientInfo[sId].hr) %></td><% } %>
+						<% for( var sId of sIds ){ %><td><%= GetReadableHr(coinStat.latest.clientInfo[sId].hr) %></td><% } %>
 					</tr>
 					<tr>
 						<td> 最近一次提交于 </td>
 						<% var nowTime = Date.now() %>
-						<% for( var sId in sIds ){ %><td><%= coinStat.latest.clientInfo[sId].lastSubmit == -1 ? '刚刚' : Moment.duration(nowTime-coinStat.latest.clientInfo[sId].lastSubmit).asSeconds()+' 秒前' %></td><% } %>
+						<% for( var sId of sIds ){ %><td><%= coinStat.latest.clientInfo[sId].lastSubmit == -1 ? '刚刚' : Moment.duration(nowTime-coinStat.latest.clientInfo[sId].lastSubmit).asSeconds()+' 秒前' %></td><% } %>
 					</tr>
 				</tbody>
 			</table>
