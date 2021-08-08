@@ -69,30 +69,34 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		<p> 为避免过多的手续费损失，矿池将在您的“未支付金额”达到 <%= coinConfig.payment.minimumPayment %> <%= coinConfig.symbol %> 时进行支付 </p>
 		
 		<%
-			var sIds = [];
+			var workers = [];
 			for( var sId in coinStat.latest.clientInfo )
 				if( coinStat.latest.clientInfo[sId].address == minerAddress )
-					sIds.push(sId);
+					workers.push(coinStat.latest.clientInfo[sId]);
 		%>
-		<% if(!sIds.length){ %>
+		<% if(!workers.length){ %>
 			<p> 当前没有活跃的矿工 </p>
 		<% }else{ %>
 			<table class="ui celled collapsing table">
 				<thead>
 					<tr>
 						<th> 矿机名 </th>
-						<% for( var sId of sIds ){ %><th><%= coinStat.latest.clientInfo[sId].label %></th><% } %>
+						<% for( var worker of workers ){ %><th><%= worker.label %></th><% } %>
+						<th> 总和 </th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td> 当前算力 </td>
-						<% for( var sId of sIds ){ %><td><%= GetReadableHr(coinStat.latest.clientInfo[sId].hr) %></td><% } %>
+						<% var totalHr = 0; for( var worker of workers ) totalHr += worker.hr; %>
+						<% for( var worker of workers ){ %><td><%= GetReadableHr(worker.hr); %></td><% } %>
+						<td> <%= GetReadableHr(totalHr) %> </td>
 					</tr>
 					<tr>
 						<td> 最近一次提交于 </td>
 						<% var nowTime = Date.now() %>
-						<% for( var sId of sIds ){ %><td><%= coinStat.latest.clientInfo[sId].lastSubmit == -1 ? '刚刚' : Moment.duration(nowTime-coinStat.latest.clientInfo[sId].lastSubmit).asSeconds()+' 秒前' %></td><% } %>
+						<% for( var worker of workers ){ %><td><%= worker.lastSubmit == -1 ? '刚刚' : Moment.duration(nowTime-worker.lastSubmit).asSeconds()+' 秒前' %></td><% } %>
+						<td> </td>
 					</tr>
 				</tbody>
 			</table>
