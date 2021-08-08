@@ -209,7 +209,7 @@ module.exports = function(portalConfig,coinsConfig){
 		}else{
 			minerStat = {
 				notFound: true
-			}
+			};
 		}
 		
 		var statForAdmin = {};
