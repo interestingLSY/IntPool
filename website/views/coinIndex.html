@@ -112,7 +112,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 					labels: chartX,
 					datasets: [{
 						label: '您所有的矿机的算力之和',
-						data: [<%for( var index in minerStat.historySumHr){%><%=minerStat.historySumHr[index]%>,<%}%>],
+						data: [<%for( var index in minerStat.historySumHr ){%><%=minerStat.historySumHr[index]%>,<%}%>],
 						borderColor: "#39C5BB",
 						backgroundColor: "#39C5BB"
 					}]
@@ -125,10 +125,10 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 					labels: chartX,
 					datasets: [
 						<% var counter = 0; %>
-						<% for( var sId in minerStat.historyHr ){ %>
+						<% for( var label in minerStat.historyHr ){ %>
 							{
-								label: '<%=sIdToLabel[sId]%>',
-								data: [<%for( var index in minerStat.historyHr[sId]){%><%=minerStat.historyHr[sId][index]%>,<%}%>],
+								label: '<%=label%>',
+								data: [<%for( var hr in minerStat.historyHr[label] ){%><%=hr%>,<%}%>],
 								borderColor: GetChartColor(<%=counter%>)+"99",
 								backgroundColor: GetChartColor(<%=counter%>)+"66"
 							},
