@@ -41,8 +41,9 @@ module.exports = function(portalConfig,coinsConfig){
 		daemons[coin] = new Daemon(portalConfig,coinsConfig[coin]);
 	
 	var coinsStat = {};
-	var addressToSId = {};
-	var sIdToLabel = {};
+	var addressToSId = {};		// SET
+	var sIdToLabel = {};		// LIST
+	var addressToLabel = {};	// SET
 	var minerStatCached = {};
 	var UpdateStat = function(){
 		addressToSId = {};
@@ -65,9 +66,12 @@ module.exports = function(portalConfig,coinsConfig){
 					for( var record of result ){
 						for( var sId in record.clientInfo ){
 							var address = record.clientInfo[sId].address;
+							var label = record.clientInfo[sId].label;
 							if(!addressToSId[address]) addressToSId[address] = new Set();
 							addressToSId[address].add(sId);
-							sIdToLabel[sId] = record.clientInfo[sId].label;
+							if(!addressToLabel[address]) addressToLabel[address] = new Set();
+							addressToLabel[address].add(label);
+							sIdToLabel[sId] = label;
 						}
 					}
 					coinsStat[coin].history = result;
@@ -175,15 +179,15 @@ module.exports = function(portalConfig,coinsConfig){
 			else minerStat = minerStatCached[minerAddress] = await (async ()=>{
 				var historyHr = {};	// key: label, value: Array
 				var historySumHr = [];
-				addressToSId[minerAddress].forEach((sId)=>{
-					historyHr[sIdToLabel[sId]] = [];
+				addressToLabel[minerAddress].forEach((label)=>{
+					historyHr[label] = [];
 				});
 				for( var record of coinStat.history ){
 					var sumHr = 0;
 					var index;
-					addressToSId[minerAddress].forEach((sId)=>{
-						historyHr[sIdToLabel[sId]].push(0);
-						index = historyHr[sIdToLabel[sId]].length - 1;
+					addressToLabel[minerAddress].forEach((label)=>{
+						historyHr[label].push(0);
+						index = historyHr[label].length - 1;
 					});
 					addressToSId[minerAddress].forEach((sId)=>{
 						var curHr = record.clientInfo[sId] ? record.clientInfo[sId].hr : 0;
