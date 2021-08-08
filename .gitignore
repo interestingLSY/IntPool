@@ -2,6 +2,7 @@
 /note
 /config
 /stratum-pool
+/package-lock.json
 
 # Logs
 logs
