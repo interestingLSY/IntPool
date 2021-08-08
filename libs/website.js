@@ -173,16 +173,23 @@ module.exports = function(portalConfig,coinsConfig){
 		if( minerAddress in addressToSId ){
 			if(minerStatCached[minerAddress]) minerStat = minerStatCached[minerAddress];
 			else minerStat = minerStatCached[minerAddress] = await (async ()=>{
-				var historyHr = {};	// key: sId, value: Array
+				var historyHr = {};	// key: label, value: Array
 				var historySumHr = [];
+				addressToSId[minerAddress].forEach((sId)=>{
+					historyHr[sIdToLabel[sId]] = [];
+				});
 				for( var record of coinStat.history ){
 					var sumHr = 0;
+					var index;
+					addressToSId[minerAddress].forEach((sId)=>{
+						historyHr[sIdToLabel[sId]].push(0);
+						index = historyHr[sIdToLabel[sId]].length - 1;
+					});
 					addressToSId[minerAddress].forEach((sId)=>{
 						var curHr = record.clientInfo[sId] ? record.clientInfo[sId].hr : 0;
-						if(!historyHr[sId]) historyHr[sId] = [];
-						historyHr[sId].push(curHr);
+						historyHr[sIdToLabel[sId]][index] += curHr;
 						sumHr += curHr;
-					})
+					});
 					historySumHr.push(sumHr);
 				}
 				var accountInfo = {};
