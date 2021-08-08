@@ -9,10 +9,14 @@
 <link rel="stylesheet" type="text/css" href="/static/Semantic-UI/semantic.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/components/icon.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script>
 
 <title> <%= title ? title+' - ' : ''%>鸟池 </title>
 
 <script>
+var cookies = Cookies.withAttributes({
+	path: ''
+});
 var GetReadableHr = function(hr){
 	const suffixes = ['H/s','KH/s','MH/s','GH/s','TH/s','PH/s'];
 	var suffixIndex = 0

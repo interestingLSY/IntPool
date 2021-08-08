@@ -18,23 +18,84 @@ function GetChartColor(index){
 	return CHART_COLORS[index % CHART_COLORS.length];
 }
 var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.history[index].time).format('HH:mm')%>",<%}%>];
-
 </script>
 
 <div class="ui container" style="margin-top: 40px; width: 80%">
 	<h1 class="ui header"><%=coinConfig.chineseName%> / <%=coinConfig.name%> / <%=coinConfig.symbol%></h1>
 	
 	<h3> 我的矿工 </h3>
-	<p> <input placeholder="请在此输入您的钱包地址" id="minerAddressInput" type="text"></input> <button id="minerAddressSubmitBtn">提交并查询</button></p>
+	<% if(!minerAddress){ %> <p> 请在下面输入您的钱包地址，接着点击“提交并查询” </p> <% } %>
+	<div class="ui row">
+		<span class="ui action input">
+			<input placeholder="请在此输入您的钱包地址" id="minerAddressInput" type="text"></input>
+			<button id="minerAddressSubmitBtn" class="ui primary right labeled icon button">
+				<i class="search icon"> </i>
+				<span> 提交并查询 </span>
+			</button>
+		</span>
+		<span id="minerAddressSelectionWrapper">
+			<span style="font-size: 14px; color: #777; margin-left: 12px; margin-right: 12px;"> 或者 </span>
+			<button id="minerAddressSelectBtn" class="ui button"> 选择一个您曾经查询过的地址 </button>
+		</span>
+	</div>
+	<div id="minerAddressSelectionDimmer" class="ui page inverted dimmer">
+		<div id="minerAddressSelectionDimmerContent">
+			<h1> 请选择一个地址 </h1>
+			<div id="selectionsWrapper"> </div>
+			<div class="ui row" style="margin-top: 20px">
+				<button class="ui orange left labeled icon button" style="margin-right: 20px;" onclick="CleanQueriedAddresses();">
+					<i class="times icon"> </i>
+					清除所有查询历史
+				</button>
+				<button class="ui teal left labeled icon button" onclick="$('#minerAddressSelectionDimmer').dimmer('hide');">
+					<i class="reply icon"> </i>
+					返回
+				</button>
+			</div>
+		</div>
+	</div>
+	
 	<script>
-		$("#minerAddressInput").val("<%=minerAddress%>");
-		$("#minerAddressSubmitBtn").click(function(){
-			$("#minerAddressSubmitBtn").text("正在提交...");
-			var inputedMinerAddress = $("#minerAddressInput").val();
+		var queriedAddresses = cookies.get('queriedAddresses') ? JSON.parse(cookies.get('queriedAddresses')) : [];
+		var SearchForMinerAddress = function(inputedMinerAddress){
+			if( !inputedMinerAddress || !inputedMinerAddress.trim() ){
+				alert('请填写有效的钱包地址');
+				return;
+			}
 			if( inputedMinerAddress.indexOf('.') != -1 )
 				inputedMinerAddress = inputedMinerAddress.substr(0,inputedMinerAddress.indexOf('.'));
-			document.cookie="minerAddress="+inputedMinerAddress+"; expires=Thu, 18 Dec 2043 12:00:00 GMT";
+			cookies.set('minerAddress',inputedMinerAddress);
+			if(!queriedAddresses.includes(inputedMinerAddress))
+				queriedAddresses.push(inputedMinerAddress);
+			cookies.set('queriedAddresses',JSON.stringify(queriedAddresses));
 			location.reload();
+		}
+		var CleanQueriedAddresses = function(){
+			queriedAddresses = [];
+			cookies.set('queriedAddresses',JSON.stringify(queriedAddresses));
+			location.reload();
+		}
+		
+		$("#minerAddressInput").val("<%=minerAddress%>");
+		var dimmerHTML = '';
+		if( queriedAddresses.length > 0 ){
+			for( var minerAddress of queriedAddresses ){
+				var curHTML = '<button class="ui primary button" style="margin: 10px;" onclick="SearchForMinerAddress(\''+minerAddress+'\');">'+minerAddress+'</button>';
+				dimmerHTML += curHTML;
+			}
+		}else{
+			dimmerHTML = '<p> 您尚未进行任何查询 </p>';
+			$("#minerAddressSelectionWrapper").hide();
+		}
+		$("#selectionsWrapper").html(dimmerHTML);
+		$("#minerAddressSubmitBtn").click(function(){
+			$("#minerAddressSubmitBtn>span").text("正在提交...");
+			var inputedMinerAddress = $("#minerAddressInput").val();
+			$("#minerAddressSubmitBtn>span").text("提交并查询");
+			SearchForMinerAddress(inputedMinerAddress);
+		});
+		$("#minerAddressSelectBtn").click(function(){
+			$("#minerAddressSelectionDimmer").dimmer('show');
 		});
 	</script>
 	<%if(!minerAddress){%>
