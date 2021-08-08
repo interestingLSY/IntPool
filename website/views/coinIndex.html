@@ -128,9 +128,9 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 						<% for( var label in minerStat.historyHr ){ %>
 							{
 								label: '<%=label%>',
-								data: [<%for( var hr in minerStat.historyHr[label] ){%><%=hr%>,<%}%>],
+								data: [<%for( var hr of minerStat.historyHr[label] ){%><%=hr%>,<%}%>],
 								borderColor: GetChartColor(<%=counter%>)+"99",
-								backgroundColor: GetChartColor(<%=counter%>)+"66"
+								backgroundColor: GetChartColor(<%=counter%>)+"88"
 							},
 							<% counter += 1; %>
 						<% } %>
