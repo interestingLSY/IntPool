@@ -261,6 +261,24 @@ module.exports = function(portalConfig,coinsConfig){
 			coinConfig: coinConfig
 		})
 	});
+	
+	app.get('/api/stats',function(req,res){
+		var result = {
+			time: Date.now(),
+			pools: {}
+		};
+		for( var coin in coinsConfig ){
+			var curCoinResult = {
+				name: coinsConfig[coin].name.toLowerCase(),
+				symbol: coinsConfig[coin].symbol.toUpperCase(),
+				algorithm: coinsConfig[coin].stratumServer.coin.algorithm,
+				hashrate: coinsStat[coin].latest.pool.hr,
+				hashrateString: GetReadableHr(coinsStat[coin].latest.pool.hr)
+			};
+			result.pools[coin] = curCoinResult;
+		}
+		res.json(result);
+	});
 
 	// start web server
 	var host = portalConfig.website.host;
