@@ -273,7 +273,10 @@ module.exports = function(portalConfig,coinsConfig){
 				symbol: coinsConfig[coin].symbol.toUpperCase(),
 				algorithm: coinsConfig[coin].stratumServer.coin.algorithm,
 				hashrate: coinsStat[coin].latest.pool.hr,
-				hashrateString: GetReadableHr(coinsStat[coin].latest.pool.hr)
+				hashrateString: GetReadableHr(coinsStat[coin].latest.pool.hr),
+				poolStats: {
+					networkBlocks: coinsStat[coin].currentBlockHeight
+				}
 			};
 			result.pools[coin] = curCoinResult;
 		}
