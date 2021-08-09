@@ -242,7 +242,8 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 	</p>
 	
 	<h3> 历史状态 </h3>
-	<canvas id="networkHistoryHrCanvas" style="max-height: 300px;"> </canvas>
+	<canvas id="networkHistoryHrCanvas" style="max-height: 250px;"> </canvas>
+	<canvas id="poolHistoryHrCanvas" style="max-height: 250px;"> </canvas>
 	<script>
 		var networkHistoryHrChart = new Chart($("#networkHistoryHrCanvas"),{
 			type: 'line',
@@ -254,7 +255,15 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 					data: [<%for( var index in coinStat.history){%><%=coinStat.history[index].network.hr%>,<%}%>],
 					borderColor: "#66ccffaa",
 					backgroundColor: "#66ccffaa"
-				},{
+				}]
+			}
+		});
+		var poolHistoryHrChart = new Chart($("#poolHistoryHrCanvas"),{
+			type: 'line',
+			options: {},
+			data: {
+				labels: chartX,
+				datasets: [{
 					label: '矿池哈希速率',
 					data: [<%for( var index in coinStat.history){%><%=coinStat.history[index].pool.hr%>,<%}%>],
 					borderColor: "#ee0000aa",
