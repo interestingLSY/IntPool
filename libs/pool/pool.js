@@ -20,8 +20,8 @@ module.exports = function(portalConfig,coinConfig){
 	key: subscriptionId
 	value: {}
 	*/
-	clientInfo = {};
-	hrKeepers = {};
+	var clientInfo = {};
+	var hrKeepers = {};
 	var RefreshClientInfoForNewRound = function(subscriptionId){
 		clientInfo[subscriptionId].curRound = {
 			"validShare": 0,
@@ -29,7 +29,7 @@ module.exports = function(portalConfig,coinConfig){
 		};
 	}
 	var onAuthorize = function(ip,port,subscriptionId,address,label,callback){
-		logger.protocol('Trying to authorize:',subscriptionId,address,label);
+		logger.protocol('Authorizing',subscriptionId,address,label);
 		(subscriptionId in clientInfo) || (clientInfo[subscriptionId] = {});
 		clientInfo[subscriptionId] = {
 			address: address,

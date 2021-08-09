@@ -214,6 +214,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		</thead>
 		<tbody>
 			<% for( var port in coinConfig.stratumServer.ports ){ %>
+				<% if( coinConfig.stratumServer.ports[port].hidden ) break; %>
 				<% var portConfig = coinConfig.stratumServer.ports[port]; %>
 				<tr>
 					<td> stratum+tcp://<%=portalConfig.pool.poolUrl%>:<%=port%> </td>
@@ -311,11 +312,11 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			</tr>
 		</thead>
 		<tbody>
-			<% for( var index in onlineMinersSorted ){ %>
+			<% for( var miner of coinStat.onlineMinersSorted ){ %>
 				<tr>
-					<td><%= GetVagueAddress(onlineMinersSorted[index].address,statForAdmin.isAdmin) %></td>
-					<td><%= GetReadableHr(onlineMinersSorted[index].hr) %></td>
-					<td><%= onlineMinersSorted[index].workerCount %></td>
+					<td><%= GetVagueAddress(miner.address,statForAdmin.isAdmin) %></td>
+					<td><%= GetReadableHr(miner.hr) %></td>
+					<td><%= miner.workerCount %></td>
 				</tr>
 			<% } %>
 		</tbody>

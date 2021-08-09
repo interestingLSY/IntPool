@@ -10,7 +10,7 @@ module.exports = function(portalConfig,coinsConfig){
 		pools[coinConfig.name] = new Pool(portalConfig,coinConfig);
 	}
 
-	for( var coin in coinsConfig ){
+	for( let coin in coinsConfig ){
 		var coinConfig = coinsConfig[coin];
 		if(!coinConfig.enabled) continue;
 		SpawnPool(coinConfig);

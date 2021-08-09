@@ -48,6 +48,7 @@ module.exports = function(portalConfig,coinsConfig){
 	var UpdateStat = function(){
 		addressToSId = {};
 		sIdToLabel = {};
+		addressToLabel = {};
 		minerStatCached = {};
 		for( let coin in coinsConfig ){
 			let tablePrefix = 'intpool:'+coinsConfig[coin].symbol+':';
@@ -239,7 +240,6 @@ module.exports = function(portalConfig,coinsConfig){
 			minerStat: minerStat,
 			addressToSId: addressToSId,
 			sIdToLabel: sIdToLabel,
-			onlineMinersSorted: coinsStat[coin].onlineMinersSorted,
 			statForAdmin: statForAdmin
 		})
 	});

@@ -3,6 +3,7 @@
 /config
 /stratum-pool
 /package-lock.json
+/multi-hashing
 
 # Logs
 logs
