@@ -262,6 +262,7 @@ module.exports = function(portalConfig,coinsConfig){
 		})
 	});
 	
+	// 这两个 api 主要是在为 miningpoolstatus.stream 提供信息
 	app.get('/api/stats',function(req,res){
 		var result = {
 			time: Date.now(),
@@ -282,6 +283,30 @@ module.exports = function(portalConfig,coinsConfig){
 		}
 		res.json(result);
 	});
+	
+	app.get('/api/blocks',async function(req,res){
+		var result = {};
+		
+		var promises = [];
+		for( let coin in coinsConfig ){
+			promises.push(redis.cmdSync('LRANGE',['intpool:'+coinsConfig[coin].symbol+':solvedBlocks',0,1002]));
+		}
+		
+		Promise.all(promises).then((results)=>{
+			var nowIndex = 0;
+			for( let coin in coinsConfig ){
+				var solvedBlocks = results[nowIndex];
+				for( var record of solvedBlocks ){
+					record = JSON.parse(record);
+					console.log(record);
+					result[coinsConfig[coin].name.toLowerCase()+'-'+record.height.toString()] =
+						record.blockHash + ":" + record.txHash + ":" + record.height + ":" + record.finder + ":" + record.time;
+				}
+				nowIndex += 1;
+			}
+			res.json(result);
+		});
+	})
 
 	// start web server
 	var host = portalConfig.website.host;
