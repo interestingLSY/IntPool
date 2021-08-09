@@ -53,6 +53,7 @@ module.exports = function(portalConfig,coinsConfig){
 		for( let coin in coinsConfig ){
 			let tablePrefix = 'intpool:'+coinsConfig[coin].symbol+':';
 			coinsStat[coin] = {};
+			minerStatCached[coin] = {};
 			
 			Promise.all([
 				redis.cmdSync('LRANGE',[tablePrefix+'history',0,-1]),
@@ -176,8 +177,8 @@ module.exports = function(portalConfig,coinsConfig){
 		
 		var minerStat;
 		if( minerAddress in addressToSId ){
-			if(minerStatCached[minerAddress]) minerStat = minerStatCached[minerAddress];
-			else minerStat = minerStatCached[minerAddress] = await (async ()=>{
+			if(minerStatCached[coin][minerAddress]) minerStat = minerStatCached[coin][minerAddress];
+			else minerStat = minerStatCached[coin][minerAddress] = await (async ()=>{
 				var historyHr = {};	// key: label, value: Array
 				var historySumHr = [];
 				addressToLabel[minerAddress].forEach((label)=>{
