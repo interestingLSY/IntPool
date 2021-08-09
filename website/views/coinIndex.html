@@ -321,13 +321,20 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			</tr>
 		</thead>
 		<tbody>
+			<% var totalWorkerCount = 0; %>
 			<% for( var miner of coinStat.onlineMinersSorted ){ %>
 				<tr>
 					<td><%= GetVagueAddress(miner.address,statForAdmin.isAdmin) %></td>
 					<td><%= GetReadableHr(miner.hr) %></td>
 					<td><%= miner.workerCount %></td>
+					<% totalWorkerCount += miner.workerCount; %>
 				</tr>
 			<% } %>
+			<tr>
+				<td><b>总计</b></td>
+				<td><%= GetReadableHr(coinStat.latest.pool.hr) %></td>
+				<td><%= totalWorkerCount %></td>
+			</tr>
 		</tbody>
 	</table>
 		
