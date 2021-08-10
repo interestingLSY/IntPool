@@ -298,7 +298,6 @@ module.exports = function(portalConfig,coinsConfig){
 				var solvedBlocks = results[nowIndex];
 				for( var record of solvedBlocks ){
 					record = JSON.parse(record);
-					console.log(record);
 					result[coinsConfig[coin].name.toLowerCase()+'-'+record.height.toString()] =
 						record.blockHash + ":" + record.txHash + ":" + record.height + ":" + record.finder + ":" + record.time;
 				}
