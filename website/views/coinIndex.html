@@ -318,22 +318,29 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 				<th> 地址  </th>
 				<th> 算力 </th>
 				<th> 矿机数 </th>
+				<th> 在过去 50 个块内的出块数 </th>
 			</tr>
 		</thead>
 		<tbody>
 			<% var totalWorkerCount = 0; %>
+			<% var totalSolvedBlockCount = 0; %>
 			<% for( var miner of coinStat.onlineMinersSorted ){ %>
 				<tr>
 					<td><%= GetVagueAddress(miner.address,statForAdmin.isAdmin) %></td>
 					<td><%= GetReadableHr(miner.hr) %></td>
 					<td><%= miner.workerCount %></td>
+					<td><%= miner.solvedBlockCount %></td>
 					<% totalWorkerCount += miner.workerCount; %>
+					<% totalSolvedBlockCount += miner.solvedBlockCount; %>
+				</tr>
+				<tr>
 				</tr>
 			<% } %>
 			<tr>
 				<td><b>总计</b></td>
 				<td><%= GetReadableHr(coinStat.latest.pool.hr) %></td>
 				<td><%= totalWorkerCount %></td>
+				<td><%= totalSolvedBlockCount %></td>
 			</tr>
 		</tbody>
 	</table>
