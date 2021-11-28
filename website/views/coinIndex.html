@@ -318,7 +318,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 				<th> 地址  </th>
 				<th> 算力 </th>
 				<th> 矿机数 </th>
-				<th> 在过去 50 个块内的出块数 </th>
+				<th> 出块数(last 50) </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -350,7 +350,7 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 		<p> 矿池尚未找到任何块 </p>
 	<% }else{ %>
 		<p style="font-size: 16px"> 累计找到了 <%=coinStat.solvedBlockCount%> 个块</p>
-		<p> 下面只显示最近找到的 25 个块 </p>
+		<p> 下面只显示最近找到的 50 个块 </p>
 		<table class="ui very basic table">
 			<tbody>
 				<% for( var index in coinStat.solvedBlocks ){ %>

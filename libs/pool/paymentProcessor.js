@@ -53,7 +53,6 @@ module.exports = function(portalConfig,coinConfig){
 		}
 		if( sumOfNeedToPay == 0 ){
 			// 不需要支付
-			// logger.info("sumOfNeedToPay==0,停止支付");
 			return;
 		}
 		
