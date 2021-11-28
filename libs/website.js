@@ -57,7 +57,8 @@ module.exports = function(portalConfig,coinsConfig){
 			
 			Promise.all([
 				redis.cmdSync('LRANGE',[tablePrefix+'history',0,-1]),
-				redis.cmdSync('GET',[tablePrefix+'latestStat'])
+				redis.cmdSync('GET',[tablePrefix+'latestStat']),
+				redis.cmdSync('LRANGE',[tablePrefix+'solvedBlocks',0,49])
 			]).then(function(result){
 				((result,latestStat)=>{
 					result.reverse();
@@ -79,6 +80,18 @@ module.exports = function(portalConfig,coinsConfig){
 					coinsStat[coin].history = result;
 				})(result[0],result[1]);
 				
+				((result)=>{
+					coinsStat[coin].solvedBlocks = result.map((x)=>JSON.parse(x));
+					for( let index in coinsStat[coin].solvedBlocks ){
+						redis.cmd('SISMEMBER',[tablePrefix+'checkedOrphanedBlocks',coinsStat[coin].solvedBlocks[index].height],function(err,result){
+							if(result) coinsStat[coin].solvedBlocks[index].isOrphanedBlock = true;
+							else redis.cmd('SISMEMBER',[tablePrefix+'uncheckedOrphanedBlocks',coinsStat[coin].solvedBlocks[index].height],function(err,result){
+								if(result) coinsStat[coin].solvedBlocks[index].isOrphanedBlock = true;
+							});
+						})
+					}
+				})(result[2]);
+				
 				((latestStat)=>{
 					latestStat = JSON.parse(latestStat);
 					coinsStat[coin].latest = latestStat;
@@ -93,13 +106,21 @@ module.exports = function(portalConfig,coinsConfig){
 							coinsStat[coin].onlineMiners[address] = { hr: 0, workerCount: 0 };
 						coinsStat[coin].onlineMiners[address].hr += clientInfo.hr;
 						coinsStat[coin].onlineMiners[address].workerCount += 1;
+						var solvedBlockCount = 0;
+						for( var block of coinsStat[coin].solvedBlocks )
+							if( block.finder == minerAddress )
+								solvedBlockCount += 1;
+						coinsStat[coin].onlineMiners[address].solvedBlockCount = solvedBlockCount;
 					}
+							
 					for( var address in coinsStat[coin].onlineMiners )
 						coinsStat[coin].onlineMinersSorted.push({
 							address: address,
 							hr: coinsStat[coin].onlineMiners[address].hr,
-							workerCount: coinsStat[coin].onlineMiners[address].workerCount
+							workerCount: coinsStat[coin].onlineMiners[address].workerCount,
+							solvedBlockCount: coinsStat[coin].onlineMiners[address].solvedBlockCount
 						})
+						
 					coinsStat[coin].onlineMinersSorted.sort( (a,b)=>b.hr-a.hr );
 				})(result[1]);
 			});
@@ -114,17 +135,6 @@ module.exports = function(portalConfig,coinsConfig){
 				coinsStat[coin].currentBlockHeight = parseInt(result);
 			});
 			
-			redis.cmd('LRANGE',[tablePrefix+'solvedBlocks',0,49],function(err,result){
-				coinsStat[coin].solvedBlocks = result.map((x)=>JSON.parse(x));
-				for( let index in coinsStat[coin].solvedBlocks ){
-					redis.cmd('SISMEMBER',[tablePrefix+'checkedOrphanedBlocks',coinsStat[coin].solvedBlocks[index].height],function(err,result){
-						if(result) coinsStat[coin].solvedBlocks[index].isOrphanedBlock = true;
-						else redis.cmd('SISMEMBER',[tablePrefix+'uncheckedOrphanedBlocks',coinsStat[coin].solvedBlocks[index].height],function(err,result){
-							if(result) coinsStat[coin].solvedBlocks[index].isOrphanedBlock = true;
-						});
-					})
-				}
-			});
 			redis.cmd('LLEN',[tablePrefix+'solvedBlocks'],function(err,result){
 				coinsStat[coin].solvedBlockCount = result || 0;
 			});
@@ -206,15 +216,10 @@ module.exports = function(portalConfig,coinsConfig){
 						accountInfo = JSON.parse(res) || { 'unpaid': 0, 'paid': 0 };
 					})(result[0]);
 				});
-				var solvedBlockCount = 0;
-				for( var block of coinStat.solvedBlocks )
-					if( block.finder == minerAddress )
-						solvedBlockCount += 1;
 				return {
 					historyHr: historyHr,
 					historySumHr: historySumHr,
-					accountInfo: accountInfo,
-					solvedBlockCount: solvedBlockCount
+					accountInfo: accountInfo
 				}
 			})();
 		}else{
