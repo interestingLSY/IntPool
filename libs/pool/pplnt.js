@@ -40,9 +40,11 @@ module.exports = function(portalConfig,coinConfig){
 			item = item.data;
 			var address = item.address;
 			var earned = parseInt(otherReward*item.contribution/contributionSum);
+			// console.log(address,earned,item.contribution,contributionSum);
 			clientRewards[address] = (clientRewards[address]||0) + earned;
 		})
 		clientRewards[finderAddress] = (clientRewards[finderAddress]||0) + finderReward;
+		// console.log(blockReward,clientRewards);
 		
 		return clientRewards;
 	}

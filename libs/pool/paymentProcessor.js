@@ -35,6 +35,7 @@ module.exports = function(portalConfig,coinConfig){
 		var uncheckedOrphanedBlockCount = await redis.cmdSync('SCARD',[tablePrefix+'uncheckedOrphanedBlocks']);
 		if(uncheckedOrphanedBlockCount){
 			// 存在未补偿的孤块，无法进行支付
+			logger.info("暂时还有孤块没有处理，停止支付");
 			return;
 		}
 		
@@ -52,6 +53,7 @@ module.exports = function(portalConfig,coinConfig){
 		}
 		if( sumOfNeedToPay == 0 ){
 			// 不需要支付
+			// logger.info("sumOfNeedToPay==0,停止支付");
 			return;
 		}
 		
