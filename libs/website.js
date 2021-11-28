@@ -114,7 +114,7 @@ module.exports = function(portalConfig,coinsConfig){
 				coinsStat[coin].currentBlockHeight = parseInt(result);
 			});
 			
-			redis.cmd('LRANGE',[tablePrefix+'solvedBlocks',0,24],function(err,result){
+			redis.cmd('LRANGE',[tablePrefix+'solvedBlocks',0,49],function(err,result){
 				coinsStat[coin].solvedBlocks = result.map((x)=>JSON.parse(x));
 				for( let index in coinsStat[coin].solvedBlocks ){
 					redis.cmd('SISMEMBER',[tablePrefix+'checkedOrphanedBlocks',coinsStat[coin].solvedBlocks[index].height],function(err,result){
@@ -206,10 +206,15 @@ module.exports = function(portalConfig,coinsConfig){
 						accountInfo = JSON.parse(res) || { 'unpaid': 0, 'paid': 0 };
 					})(result[0]);
 				});
+				var solvedBlockCount = 0;
+				for( var block of coinStat.solvedBlocks )
+					if( block.finder == minerAddress )
+						solvedBlockCount += 1;
 				return {
 					historyHr: historyHr,
 					historySumHr: historySumHr,
-					accountInfo: accountInfo
+					accountInfo: accountInfo,
+					solvedBlockCount: solvedBlockCount
 				}
 			})();
 		}else{
