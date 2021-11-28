@@ -108,11 +108,11 @@ module.exports = function(portalConfig,coinsConfig){
 						coinsStat[coin].onlineMiners[address].workerCount += 1;
 						var solvedBlockCount = 0;
 						for( var block of coinsStat[coin].solvedBlocks )
-							if( block.finder == minerAddress )
+							if( block.finder == address )
 								solvedBlockCount += 1;
 						coinsStat[coin].onlineMiners[address].solvedBlockCount = solvedBlockCount;
 					}
-							
+					
 					for( var address in coinsStat[coin].onlineMiners )
 						coinsStat[coin].onlineMinersSorted.push({
 							address: address,
