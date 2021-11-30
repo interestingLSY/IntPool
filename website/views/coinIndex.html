@@ -139,6 +139,29 @@ var chartX = [<%for( var index in coinStat.history){%>"<%=Moment(coinStat.histor
 			<p> 当前没有活跃的矿工 </p>
 		<% }else{ %>
 			<table class="ui celled collapsing table">
+				<% 	var hashrateSum = {};
+					for( var worker of workers ){
+						if( !(worker.label in hashrateSum) ) hashrateSum[worker.label] = 0;
+						hashrateSum[worker.label] += worker.hr;
+					}
+				%>
+				<thead>
+					<tr>
+						<th> 矿机名 </th>
+						<% for( var label in hashrateSum ){ %><th><%= label %></th><% } %>
+						<th> 总和 </th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td> 当前算力 </td>
+						<% var totalHr = 0; for( var label in hashrateSum ) totalHr += hashrateSum[label]; %>
+						<% for( var label in hashrateSum ){ %><td><%= GetReadableHr(hashrateSum[label]); %></td><% } %>
+						<td> <%= GetReadableHr(totalHr) %> </td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="ui celled collapsing table">
 				<thead>
 					<tr>
 						<th> 矿机名 </th>
