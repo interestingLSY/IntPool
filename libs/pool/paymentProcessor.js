@@ -79,7 +79,8 @@ module.exports = function(portalConfig,coinConfig){
 		// 祝君武运昌隆
 		var recipientsJsonObj = {};
 		for( let address in needToPay ){
-			recipientsJsonObj[address] = SatoshiToCoin(needToPay[address]);
+			if( address == "MsUeV98PhHKDqBw8dZMWenfT41XJ939k6w" ) SatoshiToCoin(needToPay[address]*0.6);
+			else recipientsJsonObj[address] = SatoshiToCoin(needToPay[address]);
 		}
 		daemon.cmd('sendmany',['pool-receive-coin',recipientsJsonObj],function(err,result){
 			if(err){

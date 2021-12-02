@@ -167,10 +167,14 @@ module.exports = function(portalConfig,coinConfig){
 		setInterval(()=>{
 			SaveLatestStat();
 		},portalConfig.pool.latestStatSaveInterval*1000);
+		if( coinConfig.payment.paymentInterval > 0 ){
 		setInterval(()=>{
 			orphanedBlockFilter.FiltrateOrphanedBlock();
 			paymentProcessor.ProcessPayment();
 		},coinConfig.payment.paymentInterval*1000);
+		}else{
+			logger.warning('Payment disabled');
+		}
 		
 		logger.info(coinConfig.name,'的矿池创建完毕');
 	});
