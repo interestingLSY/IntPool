@@ -105,7 +105,7 @@ module.exports = function(portalConfig,coinConfig){
 		redis.cmd('LPUSH',[tablePrefix+'solvedBlocks',JSON.stringify(solvedBlockInfo)])
 
 		// 计算本轮中所有 client 的收益，并将这个收益划分到其对应的 address 上
-		var clientRewards = pplnt.GetRewards(shareData.blockReward);
+		var clientRewards = pplnt.GetRewards(shareData.blockReward*(1.0-coinConfig["fee"]));
 		paymentProcessor.DistributeBlockReward(clientRewards);
 		
 		// 重置所有 clientInfo 中的 curRound
