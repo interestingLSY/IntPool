@@ -17,7 +17,7 @@
   "author": "intlsy",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "async": "^3.2.0",
+    "async": "^3.2.2",
     "colors": "^1.4.0",
     "cookies": "^0.8.0",
     "dateformat": "^4.5.1",
