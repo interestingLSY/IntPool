@@ -94,7 +94,7 @@ module.exports = function(portalConfig,coinConfig){
 			blockHash: shareData.blockHash,
 			txHash: shareData.txHash
 		};
-		logger.info("OHHHH! The block solution is found!",{
+		logger.info("OHHHH! A block nonce is found!",{
 			height: shareData.height,
 			worker: shareData.worker,
 			sId: shareData.subscriptionId,
